@@ -5,6 +5,12 @@ const axios = inject('axios') // inject axios
 const combos = ref({})
 const percentChoose = ref(0)
 let attacksStepOne = ref([])
+let attacksStepTwo = ref([])
+let attacksStepThree = ref([])
+let attacksStepFour = ref([])
+let attacksStepFive = ref([])
+//@todo : remplir ce tableau contenant toutes les attaques précédentes (et le vider à chaque changement de %)
+let prevAttacks = ref([])
 
 const getList = () => {
   axios
@@ -19,28 +25,59 @@ const getImageUrl = (character, name) => {
   return new URL(`./assets/images/combos/${character}/${name}.jpg`, import.meta.url).href
 }
 
-const filterCombosByPercent = (event) => {
-  attacksStepOne.value = []
+const getCombosChoosedArray = () => {
   // Get combos for choose percent and transform data into array
   const asArray = Object.entries(combos.value)
-  if (asArray.filter(([key]) => key == event.target.value).length != 0) {
-    const filtered = { ...asArray.filter(([key]) => key == event.target.value)[0][1] }
-
-    // Keep attack name for step one
-    //let attacksStepOne = []
-    for (const [key, value] of Object.entries(filtered)) {
-      attacksStepOne.value.push(value.steps[0])
-    }
-
-    // Keep only one occurrence for each attack
-    attacksStepOne.value = [...new Set(attacksStepOne.value)]
-    console.log('attacksStepOne', attacksStepOne.value)
+  let filtered = {}
+  if (asArray.filter(([key]) => key == percentChoose.value).length != 0) {
+    filtered = { ...asArray.filter(([key]) => key == percentChoose.value)[0][1] }
   }
+
+  return filtered
 }
 
-const nextStep = () => {}
+const filterCombosByPercent = (event) => {
+  attacksStepOne.value = []
+  attacksStepTwo.value = [] 
+  attacksStepThree.value = [] 
+  attacksStepFour.value = [] 
+  attacksStepFive.value = [] 
+
+  console.log('1')
+  // Get combos for choose percent and transform data into array
+  const filtered = getCombosChoosedArray()
+
+  // Keep attack name for step one
+  for (const [key, value] of Object.entries(filtered)) {
+    attacksStepOne.value.push(value.steps[0])
+  }
+
+  // Keep only one occurrence for each attack
+  attacksStepOne.value = [...new Set(attacksStepOne.value)]
+}
+
+const nextStep = (step, prevAttack) => {
+//@todo : vider l'étape en question et toutes les étapes (sur ce principe : attacksStepOne.value = [])
+  const filtered = getCombosChoosedArray()
+
+  let attacksNextStep = [attacksStepOne, attacksStepTwo, attacksStepThree, attacksStepFour, attacksStepFive]
+
+  //@todo le filtered doit avoir tous ceux de la deuxième étape qui ont la première étape de l'image que l'on a cliqué
+  // Keep attack name for step one
+  for (const [key, value] of Object.entries(filtered)) {
+    // Add attack only if previous attack is this clicked
+    if(value.steps[step-1] == prevAttack)
+    attacksNextStep[step].value.push(value.steps[step])
+  }
+
+  // Keep only one occurrence for each attack
+  attacksNextStep[step].value = [...new Set(attacksNextStep[step].value)]
+}
 
 getList()
+
+//@todo : garder l'image sélectionnée agrandi (surement avec une ref en classe de la div parent)
+//@todo : au clic sur une image alors que le combo est affiché, on repart sur un nouveau combo.
 </script>
 
 <template>
@@ -70,7 +107,7 @@ getList()
       <h3 class="titleStep">Etape 1</h3>
       <div class="attacksWrapper">
         <div v-for="attack of attacksStepOne" :key="attack" class="attackWrapper">
-          <img @click="nextStep" :src="getImageUrl('mario', attack)" class="attackImage" />
+          <img @click="nextStep(1,attack)" :src="getImageUrl('mario', attack)" class="attackImage" />
           <span class="nameAttack">{{ attack }}</span>
         </div>
       </div>
@@ -79,7 +116,7 @@ getList()
       <h3 class="titleStep">Etape 2</h3>
       <div class="attacksWrapper">
         <div v-for="attack of attacksStepTwo" :key="attack" class="attackWrapper">
-          <img @click="nextStep" :src="getImageUrl('mario', attack)" class="attackImage" />
+          <img @click="nextStep(2,attack)" :src="getImageUrl('mario', attack)" class="attackImage" />
           <span class="nameAttack">{{ attack }}</span>
         </div>
       </div>
@@ -88,7 +125,7 @@ getList()
       <h3 class="titleStep">Etape 3</h3>
       <div class="attacksWrapper">
         <div v-for="attack of attacksStepThree" :key="attack" class="attackWrapper">
-          <img @click="nextStep" :src="getImageUrl('mario', attack)" class="attackImage" />
+          <img @click="nextStep(3,attack)" :src="getImageUrl('mario', attack)" class="attackImage" />
           <span class="nameAttack">{{ attack }}</span>
         </div>
       </div>
@@ -97,7 +134,7 @@ getList()
       <h3 class="titleStep">Etape 4</h3>
       <div class="attacksWrapper">
         <div v-for="attack of attacksStepFour" :key="attack" class="attackWrapper">
-          <img @click="nextStep" :src="getImageUrl('mario', attack)" class="attackImage" />
+          <img @click="nextStep(4,attack)" :src="getImageUrl('mario', attack)" class="attackImage" />
           <span class="nameAttack">{{ attack }}</span>
         </div>
       </div>
@@ -106,7 +143,7 @@ getList()
       <h3 class="titleStep">Etape 5</h3>
       <div class="attacksWrapper">
         <div v-for="attack of attacksStepFive" :key="attack" class="attackWrapper">
-          <img @click="nextStep" :src="getImageUrl('mario', attack)" class="attackImage" />
+          <img @click="nextStep(5,attack)" :src="getImageUrl('mario', attack)" class="attackImage" />
           <span class="nameAttack">{{ attack }}</span>
         </div>
       </div>
@@ -270,6 +307,13 @@ getList()
     margin: 0 16px;
     width: 240px;
     cursor: pointer;
+    transition: all .3s ease-out;
+
+    &:hover {
+      transform: scale(1.5);
+      margin: 0 76px;
+      transition: all .3s ease-in;
+    }
 
     .attackImage {
       width: 100%;
