@@ -1,0 +1,34 @@
+{
+  "combos": [
+    {
+      "percent": 18,
+      "steps": {
+        "step": "neutral-air",
+        "step": "up-air",
+        "step": "up-air",
+        "step": "up-air"
+      },
+      "link": "url"
+    },
+    {
+      "percent": 37,
+      "steps": {
+        "step": "neutral-air",
+        "step": "up-down",
+        "step": "up-air",
+        "step": "up-air"
+      },
+      "link": "url"
+    },
+    {
+      "percent": 37,
+      "steps": {
+        "step": "neutral-air",
+        "step": "up-air",
+        "step": "up-air",
+        "step": "up-air"
+      },
+      "link": "url"
+    }
+  ]
+}
