@@ -9,6 +9,7 @@ let attacksStepTwo = ref([])
 let attacksStepThree = ref([])
 let attacksStepFour = ref([])
 let attacksStepFive = ref([])
+let stepsActive = ref([false,false,false,false,false,false])
 //@todo : remplir ce tableau contenant toutes les attaques précédentes (et le vider à chaque changement de %)
 let prevAttacks = ref([])
 
@@ -43,7 +44,6 @@ const filterCombosByPercent = (event) => {
   attacksStepFour.value = [] 
   attacksStepFive.value = [] 
 
-  console.log('1')
   // Get combos for choose percent and transform data into array
   const filtered = getCombosChoosedArray()
 
@@ -54,6 +54,9 @@ const filterCombosByPercent = (event) => {
 
   // Keep only one occurrence for each attack
   attacksStepOne.value = [...new Set(attacksStepOne.value)]
+
+  // Show stepOneWrapper
+  stepsActive.value[0] = attacksStepOne.value.length > 0 ? true : false;
 }
 
 const nextStep = (step, prevAttack) => {
@@ -72,6 +75,10 @@ const nextStep = (step, prevAttack) => {
 
   // Keep only one occurrence for each attack
   attacksNextStep[step].value = [...new Set(attacksNextStep[step].value)]
+
+  // Show nextStepWrapper @todo : verif si fin combo auquel cas mettre à true div de la vidéo 
+  stepsActive.value[step] = true;
+  // else stepsActive.value[6] = true;
 }
 
 getList()
@@ -103,7 +110,7 @@ getList()
       </span>
       <div class="percent">{{ percentChoose }} %</div>
     </section>
-    <section class="step stepOne">
+    <section :class="{'active': stepsActive[0]}" class="step stepOne">
       <h3 class="titleStep">Etape 1</h3>
       <div class="attacksWrapper">
         <div v-for="attack of attacksStepOne" :key="attack" class="attackWrapper">
@@ -111,8 +118,8 @@ getList()
           <span class="nameAttack">{{ attack }}</span>
         </div>
       </div>
-    </section>
-    <section class="step stepTwo">
+    </section> 
+    <section :class="{'active': stepsActive[1]}" class="step stepTwo">
       <h3 class="titleStep">Etape 2</h3>
       <div class="attacksWrapper">
         <div v-for="attack of attacksStepTwo" :key="attack" class="attackWrapper">
@@ -121,7 +128,7 @@ getList()
         </div>
       </div>
     </section>
-    <section class="step stepThree">
+    <section :class="{'active': stepsActive[2]}" class="step stepThree">
       <h3 class="titleStep">Etape 3</h3>
       <div class="attacksWrapper">
         <div v-for="attack of attacksStepThree" :key="attack" class="attackWrapper">
@@ -130,7 +137,7 @@ getList()
         </div>
       </div>
     </section>
-    <section class="step stepFour">
+    <section :class="{'active': stepsActive[3]}" class="step stepFour">
       <h3 class="titleStep">Etape 4</h3>
       <div class="attacksWrapper">
         <div v-for="attack of attacksStepFour" :key="attack" class="attackWrapper">
@@ -139,7 +146,7 @@ getList()
         </div>
       </div>
     </section>
-    <section class="step stepFive">
+    <section :class="{'active': stepsActive[4]}" class="step stepFive">
       <h3 class="titleStep">Etape 5</h3>
       <div class="attacksWrapper">
         <div v-for="attack of attacksStepFive" :key="attack" class="attackWrapper">
@@ -148,7 +155,7 @@ getList()
         </div>
       </div>
     </section>
-    <section class="step stepVideo">
+    <section :class="{'active': stepsActive[5]}" class="step stepVideo">
       <h3 class="titleStep">Exemple</h3>
       <p>La vidéo ICI</p>
     </section>
@@ -176,11 +183,13 @@ getList()
   margin: auto;
 }
 .step {
+  display: none;
   padding: 32px 0;
   text-align: center;
 }
 
 .stepHeader {
+  display: block;
   background: #c7291a;
 }
 
@@ -209,9 +218,14 @@ getList()
   background: #c7291a;
 }
 
+.active {
+  display: block;
+}
+
 .title {
   margin-bottom: 32px;
   font-size: 48px;
+  font-family: 'introRust-Base';
   text-transform: uppercase;
   color: white;
 }
@@ -256,6 +270,7 @@ getList()
     top: 24px;
     font-size: 20px;
     font-weight: 600;
+    font-family: 'introRust-Base';
     color: white;
   }
 
@@ -283,29 +298,35 @@ getList()
   border: 2px solid white;
 }
 
+
 .percent {
   width: 240px;
   margin: 0 auto 32px;
   padding: 8px 48px;
   font-size: 48px;
   font-weight: 700;
+  font-family: 'introRust-Base';
   color: red;
   background: white;
 }
 
 .titleStep {
+  font-size: 30px;
+  font-family: 'introRust-Base';
+  text-transform: uppercase;
 }
 
 .attacksWrapper {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
+  margin: 48px auto;
   .attackWrapper {
     display: flex;
     flex-direction: column;
     align-items: center;
     margin: 0 16px;
-    width: 240px;
+    width: 180px;
     cursor: pointer;
     transition: all .3s ease-out;
 
@@ -317,6 +338,12 @@ getList()
 
     .attackImage {
       width: 100%;
+    }
+
+    .nameAttack {
+      margin-top: 8px;
+      font-weight: 600;
+      text-transform: uppercase;
     }
   }
 }
