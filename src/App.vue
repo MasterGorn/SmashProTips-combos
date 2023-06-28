@@ -55,8 +55,14 @@ const filterCombosByPercent = (event) => {
   // Keep only one occurrence for each attack
   attacksStepOne.value = [...new Set(attacksStepOne.value)]
 
-  // Show stepOneWrapper
-  stepsActive.value[0] = attacksStepOne.value.length > 0 ? true : false;
+  // Show stepOneWrapper if percent had combos
+  for (let i = 0 ; i < 6 ; i++) {
+    if(i === 0) { // Show first step
+      stepsActive.value[0] = attacksStepOne.value.length > 0 ? true : false
+    } else { // Hide all steps
+      stepsActive.value[i] = false
+    }
+  }
 }
 
 const nextStep = (step, prevAttack) => {
@@ -75,8 +81,9 @@ const nextStep = (step, prevAttack) => {
 
   // Keep only one occurrence for each attack
   attacksNextStep[step].value = [...new Set(attacksNextStep[step].value)]
+  console.log('attacksNextStep[step+1]', attacksNextStep[step+1].value)
 
-  // Show nextStepWrapper @todo : verif si fin combo auquel cas mettre à true div de la vidéo 
+  // Show nextStepWrapper @todo 4 : verif si fin combo auquel cas mettre à true div de la vidéo 
   stepsActive.value[step] = true;
   // else stepsActive.value[6] = true;
 }
@@ -85,6 +92,7 @@ getList()
 
 //@todo : garder l'image sélectionnée agrandi (surement avec une ref en classe de la div parent)
 //@todo : au clic sur une image alors que le combo est affiché, on repart sur un nouveau combo.
+//@todo : si pas d'attaque après : vidéo
 </script>
 
 <template>
