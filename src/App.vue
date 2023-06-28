@@ -92,10 +92,17 @@ const nextStep = (step, prevAttack) => {
 
   // Keep only one occurrence for each attack
   attacksNextStep[step].value = [...new Set(attacksNextStep[step].value)]
-  console.log('attacksNextStep[step+1]', attacksNextStep[step+1].value)
+
+  // If no attacks = end of combo : show video
+  if(attacksNextStep[step].value[0] === undefined) {
+    stepsActive.value[5] = true;
+  } else { // Show nextStepWrapper
+    stepsActive.value[step] = true;
+  }
+
 
   // Show nextStepWrapper @todo 4 : verif si fin combo auquel cas mettre à true div de la vidéo 
-  stepsActive.value[step] = true;
+  //stepsActive.value[step] = true;
   // else stepsActive.value[6] = true;
 
 
@@ -109,7 +116,6 @@ const nextStep = (step, prevAttack) => {
 getList()
 
 //@todo : au clic sur une image alors que le combo est affiché, on repart sur un nouveau combo.
-//@todo : si pas d'attaque après : vidéo
 //@todo : si clic sur ancienne étape, mise à jour des prevAttacks
 //@todo si on part d'un combo et revient, la sélection doit être réinitialisée
 </script>
