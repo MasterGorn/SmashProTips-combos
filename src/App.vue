@@ -45,6 +45,7 @@ const filterCombosByPercent = (event) => {
   attacksStepFour.value = [] 
   attacksStepFive.value = []
   prevAttacks.value = []
+  activeAttacks.value = []
 
   // Get combos for choose percent and transform data into array
   const filtered = getCombosChoosedArray()
@@ -100,12 +101,6 @@ const nextStep = (step, prevAttack) => {
     stepsActive.value[step] = true;
   }
 
-
-  // Show nextStepWrapper @todo 4 : verif si fin combo auquel cas mettre à true div de la vidéo 
-  //stepsActive.value[step] = true;
-  // else stepsActive.value[6] = true;
-
-
   //console log :
   console.log('stepsActive',stepsActive.value,' (les étapes affichées à l\'écran)')
   console.log('activeAttacks',activeAttacks.value, ' (les attaques visibles des étapes, sélectionnées du combo, dans l\'ordre)')
@@ -114,10 +109,18 @@ const nextStep = (step, prevAttack) => {
 }
 
 getList()
-
-//@todo : au clic sur une image alors que le combo est affiché, on repart sur un nouveau combo.
-//@todo : si clic sur ancienne étape, mise à jour des prevAttacks
-//@todo si on part d'un combo et revient, la sélection doit être réinitialisée
+// MVP
+// @todo : finir le style de la barre
+// @todo : responsive style (surtout pour la barre)
+// @todo : au clic sur une image alors que le combo est affiché, on repart sur un nouveau combo.
+// @todo : si clic sur ancienne étape, mise à jour des prevAttacks
+// @todo : si on part d'un combo et revient, la sélection doit être réinitialisée
+// @todo : en faire composant exportable
+// @todo : l'appeler sur SmashProTips
+// Best Practices
+// @todo : Make component for step
+// @todo : custom color à passer au composant
+// @todo : ajouter des boutons au niveau du pourcentage pour sélectionner plus facilement un pourcentage
 </script>
 
 <template>
@@ -140,6 +143,10 @@ getList()
           min="0"
           max="150"
         />
+        <span class="percent0">0 %</span>
+        <span class="percent50">50 %</span>
+        <span class="percent100">100 %</span>
+        <span class="percent150">150 %</span>
       </span>
       <div class="percent">{{ percentChoose }} %</div>
     </section>
@@ -232,22 +239,27 @@ getList()
 }
 
 .stepTwo {
+  color: #c7291a;
   background: #eccbc6;
 }
 
 .stepThree {
+  color: #ffffff;
   background: #e3a198;
 }
 
 .stepFour {
+  color: #ffffff;
   background: #da776b;
 }
 
 .stepFive {
+  color: #ffffff;
   background: #d04437;
 }
 
 .stepVideo {
+  color: #ffffff;
   background: #c7291a;
 }
 
@@ -273,7 +285,7 @@ getList()
 }
 
 .range {
-  margin-bottom: 32px;
+  margin-bottom: 64px;
   width: 100%;
   max-width: 640px;
   height: 15px;
@@ -285,10 +297,11 @@ getList()
 
 .range::-webkit-slider-thumb {
   position: relative;
+  z-index: 5;
   width: 32px;
   height: 32px;
   border-radius: 16px;
-  background: red;
+  background: red; /* add url image arrow */
   -webkit-appearance: none;
   cursor: pointer;
   border: 2px solid white;
@@ -297,24 +310,57 @@ getList()
 .rangeWrapper {
   position: relative;
 
-  &:after,
-  &:before {
+  .percent0,
+  .percent50,
+  .percent100,
+  .percent150 {
     position: absolute;
     top: 24px;
+    left: 0;
+    width: 60px;
     font-size: 20px;
     font-weight: 600;
     font-family: 'introRust-Base';
     color: white;
+
+    &:after {
+      content: '';
+      position: absolute;
+      top: -21px;
+      left: 8px;
+      width: 2px;
+      height: 8px;
+      background: #c7291a;
+      border-radius: 1px;
+    }
   }
 
-  &:after {
-    right: -16px;
-    content: attr(data-range-max) ' %';
+  .percent0 {
+    text-align: left;
   }
 
-  &:before {
-    left: -8px;
-    content: attr(data-range-min) ' %';
+  .percent50 {
+    left: calc(33.33% - 30px);
+
+    &:after {
+      left: 24px;
+    }
+  }
+
+  .percent100 {
+    left: calc(66.66% - 30px);
+
+    &:after {
+      left: 24px;
+    }
+  }
+
+  .percent150 {
+    left: calc(100% - 60px);
+
+    &:after {
+      left: 50px;
+    }
   }
 }
 
