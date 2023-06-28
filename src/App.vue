@@ -110,12 +110,11 @@ const nextStep = (step, prevAttack) => {
 
 getList()
 // MVP
-// @todo : finir le style de la barre
-// @todo : responsive style (surtout pour la barre)
+// @todo : finir le style de la barre : 90% (url background thumb)
+// @todo : responsive style (surtout pour la barre) : 75% (agrandissement images sélectionnées)
 // @todo : au clic sur une image alors que le combo est affiché, on repart sur un nouveau combo.
 // @todo : si clic sur ancienne étape, mise à jour des prevAttacks
-// @todo : si on part d'un combo et revient, la sélection doit être réinitialisée
-// @todo : en faire composant exportable
+// @todo : en faire composant exportable https://blog.logrocket.com/building-vue-3-component-library/
 // @todo : l'appeler sur SmashProTips
 // Best Practices
 // @todo : Make component for step
