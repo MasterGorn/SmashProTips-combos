@@ -67,6 +67,11 @@ const filterCombosByPercent = (event) => {
   }
 }
 
+const isEqual = (listAttack, prevAttack) => {
+  // Checks which combos match the list of selected attacks
+  return listAttack.every((value, index) => value === prevAttack[index])
+}
+
 const nextStep = (step, prevAttack) => { 
   // Save combo
   prevAttacks.value.push(prevAttack)
@@ -80,9 +85,9 @@ const nextStep = (step, prevAttack) => {
   //@todo le filtered doit avoir tous ceux de la deuxième étape qui ont la première étape de l'image que l'on a cliqué
   // Keep attack name for step one
   for (const [key, value] of Object.entries(filtered)) {
-    // Add attack only if previous attack is this clicked
-    if(value.steps[step-1] == prevAttack)
-    attacksNextStep[step].value.push(value.steps[step])
+    // Add attack only if previous attacks corresponding to combos
+    if(isEqual(value.steps.slice(0,step),prevAttacks.value))
+      attacksNextStep[step].value.push(value.steps[step])
   }
 
   // Keep only one occurrence for each attack
@@ -92,6 +97,13 @@ const nextStep = (step, prevAttack) => {
   // Show nextStepWrapper @todo 4 : verif si fin combo auquel cas mettre à true div de la vidéo 
   stepsActive.value[step] = true;
   // else stepsActive.value[6] = true;
+
+
+  //console log :
+  console.log('stepsActive',stepsActive.value,' (les étapes affichées à l\'écran)')
+  console.log('activeAttacks',activeAttacks.value, ' (les attaques visibles des étapes, sélectionnées du combo, dans l\'ordre)')
+  console.log('prevAttacks',prevAttacks.value, ' (les attaques sélectionnées du combo, dans l\'ordre)')
+  console.log('filtered', filtered, ' (la liste des combos pour le % sélectionné)')
 }
 
 getList()
@@ -99,6 +111,7 @@ getList()
 //@todo : au clic sur une image alors que le combo est affiché, on repart sur un nouveau combo.
 //@todo : si pas d'attaque après : vidéo
 //@todo : si clic sur ancienne étape, mise à jour des prevAttacks
+//@todo si on part d'un combo et revient, la sélection doit être réinitialisée
 </script>
 
 <template>
