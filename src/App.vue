@@ -10,6 +10,7 @@ let attacksStepThree = ref([])
 let attacksStepFour = ref([])
 let attacksStepFive = ref([])
 let stepsActive = ref([false,false,false,false,false,false])
+let activeAttacks = ref(['','','','',''])
 //@todo : remplir ce tableau contenant toutes les attaques précédentes (et le vider à chaque changement de %)
 let prevAttacks = ref([])
 
@@ -42,7 +43,8 @@ const filterCombosByPercent = (event) => {
   attacksStepTwo.value = [] 
   attacksStepThree.value = [] 
   attacksStepFour.value = [] 
-  attacksStepFive.value = [] 
+  attacksStepFive.value = []
+  prevAttacks.value = []
 
   // Get combos for choose percent and transform data into array
   const filtered = getCombosChoosedArray()
@@ -65,7 +67,11 @@ const filterCombosByPercent = (event) => {
   }
 }
 
-const nextStep = (step, prevAttack) => {
+const nextStep = (step, prevAttack) => { 
+  // Save combo
+  prevAttacks.value.push(prevAttack)
+  activeAttacks.value[step-1] = prevAttack
+
 //@todo : vider l'étape en question et toutes les étapes (sur ce principe : attacksStepOne.value = [])
   const filtered = getCombosChoosedArray()
 
@@ -90,9 +96,9 @@ const nextStep = (step, prevAttack) => {
 
 getList()
 
-//@todo : garder l'image sélectionnée agrandi (surement avec une ref en classe de la div parent)
 //@todo : au clic sur une image alors que le combo est affiché, on repart sur un nouveau combo.
 //@todo : si pas d'attaque après : vidéo
+//@todo : si clic sur ancienne étape, mise à jour des prevAttacks
 </script>
 
 <template>
@@ -121,7 +127,7 @@ getList()
     <section :class="{'active': stepsActive[0]}" class="step stepOne">
       <h3 class="titleStep">Etape 1</h3>
       <div class="attacksWrapper">
-        <div v-for="attack of attacksStepOne" :key="attack" class="attackWrapper">
+        <div v-for="attack of attacksStepOne" :key="attack" :class="{'activeAttack' : activeAttacks[0] == attack}" class="attackWrapper">
           <img @click="nextStep(1,attack)" :src="getImageUrl('mario', attack)" class="attackImage" />
           <span class="nameAttack">{{ attack }}</span>
         </div>
@@ -130,7 +136,7 @@ getList()
     <section :class="{'active': stepsActive[1]}" class="step stepTwo">
       <h3 class="titleStep">Etape 2</h3>
       <div class="attacksWrapper">
-        <div v-for="attack of attacksStepTwo" :key="attack" class="attackWrapper">
+        <div v-for="attack of attacksStepTwo" :key="attack" :class="{'activeAttack' : activeAttacks[1] == attack}" class="attackWrapper">
           <img @click="nextStep(2,attack)" :src="getImageUrl('mario', attack)" class="attackImage" />
           <span class="nameAttack">{{ attack }}</span>
         </div>
@@ -139,7 +145,7 @@ getList()
     <section :class="{'active': stepsActive[2]}" class="step stepThree">
       <h3 class="titleStep">Etape 3</h3>
       <div class="attacksWrapper">
-        <div v-for="attack of attacksStepThree" :key="attack" class="attackWrapper">
+        <div v-for="attack of attacksStepThree" :key="attack" :class="{'activeAttack' : activeAttacks[2] == attack}" class="attackWrapper">
           <img @click="nextStep(3,attack)" :src="getImageUrl('mario', attack)" class="attackImage" />
           <span class="nameAttack">{{ attack }}</span>
         </div>
@@ -148,7 +154,7 @@ getList()
     <section :class="{'active': stepsActive[3]}" class="step stepFour">
       <h3 class="titleStep">Etape 4</h3>
       <div class="attacksWrapper">
-        <div v-for="attack of attacksStepFour" :key="attack" class="attackWrapper">
+        <div v-for="attack of attacksStepFour" :key="attack" :class="{'activeAttack' : activeAttacks[3] == attack}" class="attackWrapper">
           <img @click="nextStep(4,attack)" :src="getImageUrl('mario', attack)" class="attackImage" />
           <span class="nameAttack">{{ attack }}</span>
         </div>
@@ -157,7 +163,7 @@ getList()
     <section :class="{'active': stepsActive[4]}" class="step stepFive">
       <h3 class="titleStep">Etape 5</h3>
       <div class="attacksWrapper">
-        <div v-for="attack of attacksStepFive" :key="attack" class="attackWrapper">
+        <div v-for="attack of attacksStepFive" :key="attack" :class="{'activeAttack' : activeAttacks[4] == attack}" class="attackWrapper">
           <img @click="nextStep(5,attack)" :src="getImageUrl('mario', attack)" class="attackImage" />
           <span class="nameAttack">{{ attack }}</span>
         </div>
@@ -338,7 +344,8 @@ getList()
     cursor: pointer;
     transition: all .3s ease-out;
 
-    &:hover {
+    &:hover,
+    &.activeAttack {
       transform: scale(1.5);
       margin: 0 76px;
       transition: all .3s ease-in;
